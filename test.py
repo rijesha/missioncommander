@@ -4,16 +4,55 @@ class Sample:
     def gtk_main_quit( self, window ):
         Gtk.main_quit()
 
-    def sendtostaging_clicked_cb( self, button ):
+    def send_to_staging( self, button ):
+        select = self.archivearea.get_selection()
+        model, iter = select.get_selected()
+        self.stagingstore.append(self.archivestore[iter][:])
+
+    def stagingarea_to_list( self, button):
+        for row in self.stagingstore:
+            # Print values of all columns
+            list= list + (row[:])
+        return 1
+
+    def delete_from_staging( self, button ):
+        select = self.stagingarea.get_selection()
+        model, iter = select.get_selected()
+        self.stagingstore.remove(iter)
+        return 1
+
+    def delete_from_archive( self, button ):
+        select = self.archivearea.get_selection()
+        model, iter = select.get_selected()
+        self.archivestore.remove(iter)
+        return 1
+
+
+    def add_to_archive_from_file( self, button ):
+        command_list = [("Firefox", "2002"),
+                 ("Eclipse", "2004"),
+                 ("Pitivi", "2004"),
+                 ("Netbeans", "1996"),
+                 ("Chrome", "2008"),
+                 ("Filezilla", "23" ),
+                 ("Bazaar", "2005"),
+                 ("Git", "2005"),
+                 ("Linux Kernel", "1991"),
+                 ("GCC", "1987"),
+                 ("Frostwire", "2004")]
+
+        for i in command_list:
+            self.archivestore.append(list(i))
+
+        return 1
+
+    def write_to_archive( self, button ):
         select = self.archivearea.get_selection()
         selected_rows = select.get_selected_rows()
         path = selected_rows[1]
         row = path[0]
         index = row.get_indices()
         row_number = index[0]
-        print(dir(self))
-        print(row_number)
-        
 
         return 1
 
@@ -23,7 +62,6 @@ class Sample:
         builder.add_from_file( "test.glade" )
         
         self.window = builder.get_object( "window1" )
-        print(builder.get_objects())
         builder.get_objects()
         self.stagingarea = builder.get_object( "stagingarea" )
         self.stagingstore = builder.get_object( "stagingstore" )
