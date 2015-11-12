@@ -1,5 +1,10 @@
 from gi.repository import Gtk
 
+class DialogExample(Gtk.Dialog):
+
+    def __init__(self, parent):
+            win = MissionCommander()
+            win.window.show_all()
 
 class MissionCommander:
     def gtk_main_quit( self, window ):
@@ -14,6 +19,11 @@ class MissionCommander:
         for row in self.stagingstore:
             # Print values of all columns
             list= list + (row[:])
+        return 1
+
+    def open_new_command(self, button):
+        self.newcommand.run()
+        self.newcommand.destroy()
         return 1
 
     def delete_from_staging( self, button ):
@@ -88,6 +98,7 @@ class MissionCommander:
         builder.add_from_file( "test.glade" )
         
         self.window = builder.get_object( "window1" )
+        self.newcommand = builder.get_object( "dialog1" )
         self.stagingarea = builder.get_object( "stagingarea" )
         self.stagingstore = builder.get_object( "stagingstore" )
         self.archivearea = builder.get_object( "archivearea" )
