@@ -1,6 +1,7 @@
 from gi.repository import Gtk
 
-class Sample:
+
+class MissionCommander:
     def gtk_main_quit( self, window ):
         Gtk.main_quit()
 
@@ -27,8 +28,17 @@ class Sample:
         self.archivestore.remove(iter)
         return 1
 
+    def append_from_staging( self, button ):
+        return 1
 
-    def add_to_archive_from_file( self, button ):
+    def prepend_from_staging( self, button ):
+        return 1
+
+    def make_ident_from_staging( self, button ):
+        return 1
+
+
+    def import_from_file( self, button ):
         command_list = [("Firefox", "2002"),
                  ("Eclipse", "2004"),
                  ("Pitivi", "2004"),
@@ -43,7 +53,23 @@ class Sample:
 
         for i in command_list:
             self.archivestore.append(list(i))
+        return 1
 
+    def export_to_file( self, button ):
+        command_list = [("Firefox", "2002"),
+                 ("Eclipse", "2004"),
+                 ("Pitivi", "2004"),
+                 ("Netbeans", "1996"),
+                 ("Chrome", "2008"),
+                 ("Filezilla", "23" ),
+                 ("Bazaar", "2005"),
+                 ("Git", "2005"),
+                 ("Linux Kernel", "1991"),
+                 ("GCC", "1987"),
+                 ("Frostwire", "2004")]
+
+        for i in command_list:
+            self.archivestore.append(list(i))
         return 1
 
     def write_to_archive( self, button ):
@@ -62,16 +88,14 @@ class Sample:
         builder.add_from_file( "test.glade" )
         
         self.window = builder.get_object( "window1" )
-        builder.get_objects()
         self.stagingarea = builder.get_object( "stagingarea" )
         self.stagingstore = builder.get_object( "stagingstore" )
         self.archivearea = builder.get_object( "archivearea" )
         self.archivestore = builder.get_object( "archivestore" )
 
-
         builder.connect_signals( self )
 
 if __name__ == "__main__":
-    win = Sample()
+    win = MissionCommander()
     win.window.show_all()
     Gtk.main()
