@@ -6,7 +6,7 @@ class DialogExample(Gtk.Dialog):
             win = MissionCommander()
             win.window.show_all()
 
-class MissionCommander:
+class MissionGUI:
     def gtk_main_quit( self, window ):
         Gtk.main_quit()
 
@@ -95,7 +95,7 @@ class MissionCommander:
 
     def __init__( self ):
         builder = Gtk.Builder()
-        builder.add_from_file( "test.glade" )
+        builder.add_from_file( "gui.glade" )
         
         self.window = builder.get_object( "window1" )
         self.newcommand = builder.get_object( "dialog1" )
@@ -107,6 +107,6 @@ class MissionCommander:
         builder.connect_signals( self )
 
 if __name__ == "__main__":
-    win = MissionCommander()
+    win = MissionGUI()
     win.window.show_all()
     Gtk.main()

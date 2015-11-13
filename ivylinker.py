@@ -29,7 +29,7 @@ class CommandSender(object):
     def __del__(self):
         self.shutdown()
 
-    def add_mission_command(self, msg_id="", ac_id = "5", insert = "APPEND" , wp_lat="", wp_lon="", wp_alt="", duration = "60", center_lat="", center_lon="", center_alt="", radius="60",segment_lat_1="", segment_lat_2="", segment_lon_1="", segment_lon_2="", segment_alt="", point_lat_1="", point_lon_1="", point_lat_2="", point_lon_2="", point_lat_3="", point_lon_3="", point_lat_4="", point_lon_4="", point_lat_5="", point_lon_5="", path_alt, nb="", survey_lat_1="", survey_lon_1="", survey_lat_2="", survey_lon_2="", survey_alt=""):
+    def add_mission_command(self, msg_id = "", ac_id = "5", insert = "APPEND" , wp_lat = "", wp_lon = "", wp_alt = "", duration = "60", center_lat = "", center_lon = "", center_alt = "", radius = "60",segment_lat_1 = "", segment_lat_2 = "", segment_lon_1 = "", segment_lon_2 = "", segment_alt = "", point_lat_1 = "", point_lon_1 = "", point_lat_2 = "", point_lon_2 = "", point_lat_3 = "", point_lon_3 = "", point_lat_4 = "", point_lon_4 = "", point_lat_5 = "", point_lon_5 = "", path_alt = "", nb = "", survey_lat_1 = "", survey_lon_1 = "", survey_lat_2 = "", survey_lon_2 = "", survey_alt = ""):
         msg = PprzMessage("datalink", msg_id)
         msg['id'] = ac_id
         msg['insert'] = insert
