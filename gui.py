@@ -106,7 +106,8 @@ class MissionGUI:
 
         builder.connect_signals( self )
 
-if __name__ == "__main__":
-    win = MissionGUI()
-    win.window.show_all()
-    Gtk.main()
+class GUIstarter:
+    def __init__( self ):
+        win = MissionGUI()
+        win.window.show_all()
+        Gtk.main()

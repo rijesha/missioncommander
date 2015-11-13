@@ -3,6 +3,7 @@ from gi.repository import Gtk
 import threading
 import gui
 import ivylinker
+import test
 
 
 class guiThread:
@@ -35,9 +36,10 @@ class ivylinkerThread:
 
 
 if __name__ == "__main__":
-    guiTH = threading.Thread(target=gui.MissionGUI)
+    guiTH = threading.Thread(target=gui.GUIstarter)
     ivylsnTH = threading.Thread(target=ivylinker.CommandSender)
+    testTH = threading.Thread(target=test.hello)
 
     guiTH.start()
     ivylsnTH.start()
-
+    testTH.start()

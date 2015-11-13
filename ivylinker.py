@@ -73,9 +73,11 @@ class CommandSender(object):
         self._interface.send(msg)
 
 
-if __name__ == '__main__':
-    cs = CommandSender()
-    cs.add_mission_command(obstacle_id=1, color="ff0000", status=1, lat=434624607, lon=12723454, radius=100, alt=1720000)
-    cs.shutdown()
+class linkstarter:
+    def __init__( self ):
+        cs = CommandSender()
+
+#    def linkclose( self ):
+#        cs.shutdown()
 
 
