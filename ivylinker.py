@@ -14,13 +14,14 @@ from ivy_msg_interface import IvyMessagesInterface
 from pprz_msg.message import PprzMessage
 
 class CommandSender(object):
-    def __init__(self, verbose=False):
+    def __init__(self, verbose=False, callback = None):
         self.verbose = verbose
+        self.callback = callback
         self._interface = IvyMessagesInterface(self.message_recv)
 
     def message_recv(self, ac_id, msg):
-        if self.verbose:
-            print("Got msg %s" % msg.name)
+        if (self.verbose and self.callback != None):
+            self.callback(ac_id, msg)
 
     def shutdown(self):
         print("Shutting down ivy interface...")
@@ -72,12 +73,16 @@ class CommandSender(object):
         print("Sending message: %s" % msg)
         self._interface.send(msg)
 
-
-class linkstarter:
-    def __init__( self ):
-        cs = CommandSender()
-
-#    def linkclose( self ):
-#        cs.shutdown()
+    def add_obstacle(self, obstacle_id, color, status, lat, lon, radius, alt):
+        msg = PprzMessage("ground", "OBSTACLE")
+        msg['id'] = obstacle_id
+        msg['color'] = color
+        msg['status'] = status
+        msg['lat'] = lat
+        msg['lon'] = lon
+        msg['radius'] = radius
+        msg['alt'] = alt
+        print("Sending message: %s" % msg)
+        self._interface.send(msg)
 
 

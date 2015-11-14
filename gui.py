@@ -9,6 +9,7 @@ class DialogExample(Gtk.Dialog):
 class MissionGUI:
     def gtk_main_quit( self, window ):
         Gtk.main_quit()
+	missioncommander.quit()
 
     def send_to_staging( self, button ):
         select = self.archivearea.get_selection()
