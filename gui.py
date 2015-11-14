@@ -9,7 +9,7 @@ class DialogExample(Gtk.Dialog):
 class MissionGUI:
     def gtk_main_quit( self, window ):
         Gtk.main_quit()
-	missioncommander.quit()
+	self.shutdowncb()
 
     def send_to_staging( self, button ):
         select = self.archivearea.get_selection()
@@ -94,10 +94,10 @@ class MissionGUI:
         return 1
 
 
-    def __init__( self ):
+    def __init__( self , shutdowncb = None):
         builder = Gtk.Builder()
         builder.add_from_file( "gui.glade" )
-        
+        self.shutdowncb = shutdowncb
         self.window = builder.get_object( "window1" )
         self.newcommand = builder.get_object( "dialog1" )
         self.stagingarea = builder.get_object( "stagingarea" )
@@ -107,8 +107,4 @@ class MissionGUI:
 
         builder.connect_signals( self )
 
-class GUIstarter:
-    def __init__( self ):
-        win = MissionGUI()
-        win.window.show_all()
-        Gtk.main()
+

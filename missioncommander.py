@@ -15,22 +15,19 @@ class ivyInit:
             print(msg)
         
 
+class GUIstarter:
+    def __init__( self, shutdown ):
+        win = gui.MissionGUI(shutdowncb = shutdown)
+        win.window.show_all()
+        Gtk.main()
+
+
 
 
 def shutdown():
-    ivy.shutdown()
+    ivy.link.shutdown()
 
 if __name__ == "__main__":
     ivy = ivyInit()
-    UI = gui.GUIstarter()
+    UI = GUIstarter(shutdown)
 
-
-
-
-#    guiTH = threading.Thread(target=gui.GUIstarter)
-#    ivylsnTH = threading.Thread(target=ivylinker.CommandSender)
-#    testTH = threading.Thread(target=test.hello)
-
-#    guiTH.start()
-#    ivylsnTH.start()
-#    testTH.start()
