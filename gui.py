@@ -9,7 +9,7 @@ class DialogExample(Gtk.Dialog):
 class MissionGUI:
     def gtk_main_quit( self, window ):
         Gtk.main_quit()
-	self.shutdowncb()
+        self.shutdowncb()
 
     def send_to_staging( self, button ):
         select = self.archivearea.get_selection()
@@ -47,6 +47,12 @@ class MissionGUI:
 
     def make_ident_from_staging( self, button ):
         return 1
+
+    def update_uav_queue( self, msg):
+        self.uavQueue.clear()
+        for i in msg.fieldvalues[1]:
+            if i != ",":
+                self.uavQueue.append(list(i) + list((msg.fieldvalues[0], "")))
 
 
     def import_from_file( self, button ):
@@ -104,6 +110,7 @@ class MissionGUI:
         self.stagingstore = builder.get_object( "stagingstore" )
         self.archivearea = builder.get_object( "archivearea" )
         self.archivestore = builder.get_object( "archivestore" )
+        self.uavQueue = builder.get_object( "uavQueue" )
 
         builder.connect_signals( self )
 
