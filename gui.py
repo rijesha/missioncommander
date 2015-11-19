@@ -15,10 +15,13 @@ class MissionGUI:
     def ivybind(self, ivylink):
         self.ivylink = ivylink
 
-    def send_to_staging( self, button ):
-        select = self.archivearea.get_selection()
-        model, iter = select.get_selected()
-        self.stagingstore.append(self.archivestore[iter][:])
+    def send_to_staging( self, selection ):
+        (model, pathlist) = selection.get_selected_rows()
+        for path in pathlist :
+            tree_iter = model.get_iter(path)
+            self.stagingstore.append(self.archivestore[tree_iter][:])
+        return 1
+
 
     def stagingarea_to_list( self, button):
         for row in self.stagingstore:
@@ -31,16 +34,17 @@ class MissionGUI:
         self.newcommand.destroy()
         return 1
 
-    def delete_from_staging( self, button ):
-        select = self.stagingarea.get_selection()
-        model, iter = select.get_selected()
-        self.stagingstore.remove(iter)
-        return 1
+    def delete_from_staging( self, selection ):
+        (model, pathlist) = selection.get_selected_rows()
+        for path in pathlist :
+            tree_iter = model.get_iter(path)
+            self.stagingstore.remove(tree_iter)
 
-    def delete_from_archive( self, button ):
-        select = self.archivearea.get_selection()
-        model, iter = select.get_selected()
-        self.archivestore.remove(iter)
+    def delete_from_archive( self, selection ):
+        (model, pathlist) = selection.get_selected_rows()
+        for path in pathlist :
+            tree_iter = model.get_iter(path)
+            self.archivestore.remove(tree_iter)
         return 1
 
     def append_from_staging( self, selection ):
@@ -49,13 +53,14 @@ class MissionGUI:
             tree_iter = model.get_iter(path)
             value = model.get_value(tree_iter,3)
             self.ivylink.add_mission_command_dict(5 , 0, model.get_value(tree_iter,0), eval(value))
-        print("sent message")
         return 1
 
-    def prepend_from_staging( self, button, selection ):
-        select = self.stagingarea.get_selection()
-        model, iter = select.get_selected()
-        self.ivylink.add_mission_command_dict(msg)
+    def prepend_from_staging( self, selection ):
+        (model, pathlist) = selection.get_selected_rows()
+        for path in pathlist :
+            tree_iter = model.get_iter(path)
+            value = model.get_value(tree_iter,3)
+            self.ivylink.add_mission_command_dict(5 , 1, model.get_value(tree_iter,0), eval(value))
         return 1
 
     def make_ident_from_staging( self, button ):

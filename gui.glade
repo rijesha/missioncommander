@@ -129,7 +129,7 @@
                         <property name="enable_tree_lines">True</property>
                         <child internal-child="selection">
                           <object class="GtkTreeSelection" id="treeview-selection">
-                            <property name="mode">browse</property>
+                            <property name="mode">multiple</property>
                           </object>
                         </child>
                         <child>
@@ -193,7 +193,7 @@
                         <property name="image">image1</property>
                         <property name="xalign">0.47999998927116394</property>
                         <property name="always_show_image">True</property>
-                        <signal name="clicked" handler="send_to_staging" swapped="no"/>
+                        <signal name="clicked" handler="send_to_staging" object="treeview-selection" swapped="no"/>
                       </object>
                       <packing>
                         <property name="expand">True</property>
@@ -231,7 +231,9 @@
                         <property name="search_column">0</property>
                         <property name="show_expanders">False</property>
                         <child internal-child="selection">
-                          <object class="GtkTreeSelection" id="treeview-selection1"/>
+                          <object class="GtkTreeSelection" id="treeview-selection1">
+                            <property name="mode">multiple</property>
+                          </object>
                         </child>
                         <child>
                           <object class="GtkTreeViewColumn" id="treeviewcolumn3">
@@ -403,6 +405,7 @@
                       <object class="GtkButton" id="button8">
                         <property name="label" translatable="yes">New Command</property>
                         <property name="visible">True</property>
+                        <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
                         <signal name="clicked" handler="open_new_command" swapped="no"/>
@@ -419,7 +422,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
-                        <signal name="clicked" handler="delete_from_archive" swapped="no"/>
+                        <signal name="clicked" handler="delete_from_archive" object="treeview-selection" swapped="no"/>
                       </object>
                       <packing>
                         <property name="expand">True</property>
@@ -445,6 +448,7 @@
                       <object class="GtkButton" id="button2">
                         <property name="label" translatable="yes">Export</property>
                         <property name="visible">True</property>
+                        <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
                         <signal name="clicked" handler="export_to_file" swapped="no"/>
@@ -475,6 +479,7 @@
                       <object class="GtkCheckButton" id="update_staging_toggle">
                         <property name="label" translatable="yes">Update Staging from Import</property>
                         <property name="visible">True</property>
+                        <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
                         <property name="xalign">0</property>
@@ -553,6 +558,7 @@
                   <object class="GtkButton" id="button5">
                     <property name="label" translatable="yes">Make Identical</property>
                     <property name="visible">True</property>
+                    <property name="sensitive">False</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                     <signal name="clicked" handler="make_ident_from_staging" swapped="no"/>
@@ -570,7 +576,7 @@
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                     <property name="always_show_image">True</property>
-                    <signal name="clicked" handler="delete_from_staging" swapped="no"/>
+                    <signal name="clicked" handler="delete_from_staging" object="treeview-selection1" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
