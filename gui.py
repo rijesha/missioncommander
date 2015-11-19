@@ -3,8 +3,8 @@ from gi.repository import Gtk
 class DialogExample(Gtk.Dialog):
 
     def __init__(self, parent):
-            win = MissionCommander()
-            win.window.show_all()
+        win = MissionCommander()
+        win.window.show_all()
 
 class MissionGUI:
     def gtk_main_quit( self, window ):
@@ -49,10 +49,14 @@ class MissionGUI:
         return 1
 
     def update_uav_queue( self, msg):
+	self.stagingarea1.freeze_child_notify()
+        self.stagingarea1.set_model(None)
         self.uavQueue.clear()
         for i in msg.fieldvalues[1]:
             if i != ",":
                 self.uavQueue.append(list(i) + list((msg.fieldvalues[0], "")))
+        self.stagingarea1.set_model(model=self.uavQueue) 
+	self.stagingarea1.thaw_child_notify()
 
 
     def import_from_file( self, button ):
@@ -100,7 +104,7 @@ class MissionGUI:
         return 1
 
 
-    def __init__( self , shutdowncb = None):
+    def __init__( self, shutdowncb = None):
         builder = Gtk.Builder()
         builder.add_from_file( "gui.glade" )
         self.shutdowncb = shutdowncb
@@ -111,6 +115,8 @@ class MissionGUI:
         self.archivearea = builder.get_object( "archivearea" )
         self.archivestore = builder.get_object( "archivestore" )
         self.uavQueue = builder.get_object( "uavQueue" )
+        self.uavQueuestaging = builder.get_object( "uavQueuestaging" )
+        self.stagingarea1 = builder.get_object("stagingarea1")
 
         builder.connect_signals( self )
 
