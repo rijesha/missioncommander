@@ -12,6 +12,9 @@ class MissionGUI:
         Gtk.main_quit()
         self.shutdowncb()
 
+    def ivybind(self, ivylink):
+        self.ivylink = ivylink
+
     def send_to_staging( self, button ):
         select = self.archivearea.get_selection()
         model, iter = select.get_selected()
@@ -40,24 +43,29 @@ class MissionGUI:
         self.archivestore.remove(iter)
         return 1
 
-    def append_from_staging( self, button ):
+    def append_from_staging( self, button, selection ):
+        select = self.stagingarea.get_selection()
+        model, iter = select.get_selected()
         return 1
 
-    def prepend_from_staging( self, button ):
+    def prepend_from_staging( self, button, selection ):
+        select = self.stagingarea.get_selection()
+        model, iter = select.get_selected()
+        self.ivylink.add_mission_command(msg)
         return 1
 
     def make_ident_from_staging( self, button ):
         return 1
 
     def update_uav_queue( self, msg):
-	self.stagingarea1.freeze_child_notify()
+        self.stagingarea1.freeze_child_notify()
         self.stagingarea1.set_model(None)
         self.uavQueue.clear()
         for i in msg.fieldvalues[1]:
             if i != ",":
                 self.uavQueue.append(list(i) + list((msg.fieldvalues[0], "")))
         self.stagingarea1.set_model(model=self.uavQueue) 
-	self.stagingarea1.thaw_child_notify()
+        self.stagingarea1.thaw_child_notify()
 
     def update_archive(self, command_list)
         for i in command_list:
@@ -66,24 +74,10 @@ class MissionGUI:
 
 
     def import_from_file( self, button ):
-	    xmlreader.openfile("sample.xml", update_archive)
+        xmlreader.openfile("sample.xml", update_archive)
         
 
     def export_to_file( self, button ):
-        command_list = [("Firefox", "2002", "1"),
-                 ("Eclipse", "2004", "1"),
-                 ("Pitivi", "2004", "1"),
-                 ("Netbeans", "1996", "1"),
-                 ("Chrome", "2008", "1"),
-                 ("Filezilla", "23" , "1"),
-                 ("Bazaar", "2005", "1"),
-                 ("Git", "2005", "1"),
-                 ("Linux Kernel", "1991", "1"),
-                 ("GCC", "1987", "1"),
-                 ("Frostwire", "2004", "1")]
-
-        for i in command_list:
-            self.archivestore.append(list(i))
         return 1
 
     def write_to_archive( self, button ):
@@ -93,7 +87,6 @@ class MissionGUI:
         row = path[0]
         index = row.get_indices()
         row_number = index[0]
-
         return 1
 
 

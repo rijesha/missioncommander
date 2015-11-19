@@ -22,6 +22,10 @@ class GUIbinder:
         self.win = gui.MissionGUI(shutdowncb = shutdown)
         self.win.window.show_all()
 
+    def ivyGUI(self, ivy):
+        self.win.ivybind(ivy.link)
+        
+
 def shutdown():
     ivy.link.shutdown()
 
