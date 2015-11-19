@@ -17,18 +17,16 @@ class ivyInit:
             self.UI.win.update_uav_queue(msg)
             self.lastmissionmessagetime = clock()
 
-class GUIstarter:
+class GUIbinder:
     def __init__( self, shutdown):
         self.win = gui.MissionGUI(shutdowncb = shutdown)
         self.win.window.show_all()
-
-
 
 def shutdown():
     ivy.link.shutdown()
 
 if __name__ == "__main__":
-    UI = GUIstarter(shutdown)
+    UI = GUIbinder(shutdown)
     ivy = ivyInit(UI)
     Gtk.main()
 

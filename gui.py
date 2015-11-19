@@ -1,4 +1,5 @@
 from gi.repository import Gtk
+from xmlparser import xmlreader
 
 class DialogExample(Gtk.Dialog):
 
@@ -58,23 +59,15 @@ class MissionGUI:
         self.stagingarea1.set_model(model=self.uavQueue) 
 	self.stagingarea1.thaw_child_notify()
 
+    def update_archive(self, command_list)
+        for i in command_list:
+            self.archivestore.append(i.get('name') ,i.get('id'),i.get('msg'))
+        return 1
+
 
     def import_from_file( self, button ):
-        command_list = [("Firefox", "2002", "1"),
-                 ("Eclipse", "2004", "1"),
-                 ("Pitivi", "2004", "1"),
-                 ("Netbeans", "1996", "1"),
-                 ("Chrome", "2008", "1"),
-                 ("Filezilla", "23" , "1"),
-                 ("Bazaar", "2005", "1"),
-                 ("Git", "2005", "1"),
-                 ("Linux Kernel", "1991", "1"),
-                 ("GCC", "1987", "1"),
-                 ("Frostwire", "2004", "1")]
-
-        for i in command_list:
-            self.archivestore.append(list(i))
-        return 1
+	    xmlreader.openfile("sample.xml", update_archive)
+        
 
     def export_to_file( self, button ):
         command_list = [("Firefox", "2002", "1"),
