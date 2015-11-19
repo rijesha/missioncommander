@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.18.3 -->
+<!-- Generated with glade 3.19.0 -->
 <interface>
   <requires lib="gtk+" version="3.12"/>
   <object class="GtkAdjustment" id="adjustment1">
@@ -16,19 +16,9 @@
       <column type="gchararray"/>
       <!-- column-name descrip -->
       <column type="gchararray"/>
+      <!-- column-name string_of_dict -->
+      <column type="gchararray"/>
     </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">hello</col>
-        <col id="1" translatable="yes">hello1</col>
-        <col id="2" translatable="yes">asdff</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">hi</col>
-        <col id="1" translatable="yes">34</col>
-        <col id="2" translatable="yes">xcvsdf</col>
-      </row>
-    </data>
   </object>
   <object class="GtkDialog" id="dialog1">
     <property name="can_focus">False</property>
@@ -82,19 +72,9 @@
       <column type="gchararray"/>
       <!-- column-name descrip -->
       <column type="gchararray"/>
+      <!-- column-name string_of_dict -->
+      <column type="gchararray"/>
     </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">hello</col>
-        <col id="1" translatable="yes">hello1</col>
-        <col id="2" translatable="yes">asdf</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">hi</col>
-        <col id="1" translatable="yes">34</col>
-        <col id="2" translatable="yes">sadfwer</col>
-      </row>
-    </data>
   </object>
   <object class="GtkListStore" id="uavQueue">
     <columns>
@@ -105,18 +85,6 @@
       <!-- column-name descrip -->
       <column type="gchararray"/>
     </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">hello</col>
-        <col id="1" translatable="yes">hello1</col>
-        <col id="2" translatable="yes">hsdf</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">hi</col>
-        <col id="1" translatable="yes">34</col>
-        <col id="2" translatable="yes">asdfsdf</col>
-      </row>
-    </data>
   </object>
   <object class="GtkWindow" id="window1">
     <property name="can_focus">False</property>
@@ -651,27 +619,5 @@
         </child>
       </object>
     </child>
-  </object>
-  <object class="GtkListStore" id="uavQueuestaging">
-    <columns>
-      <!-- column-name ID -->
-      <column type="gchararray"/>
-      <!-- column-name nav_param -->
-      <column type="gchararray"/>
-      <!-- column-name descrip -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">hello</col>
-        <col id="1" translatable="yes">hello1</col>
-        <col id="2" translatable="yes">hsdf</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">hi</col>
-        <col id="1" translatable="yes">34</col>
-        <col id="2" translatable="yes">asdfsdf</col>
-      </row>
-    </data>
   </object>
 </interface>

@@ -1,5 +1,5 @@
 from gi.repository import Gtk
-from xmlparser import xmlreader
+import xmlparser
 
 class DialogExample(Gtk.Dialog):
 
@@ -43,15 +43,19 @@ class MissionGUI:
         self.archivestore.remove(iter)
         return 1
 
-    def append_from_staging( self, button, selection ):
-        select = self.stagingarea.get_selection()
-        model, iter = select.get_selected()
+    def append_from_staging( self, selection ):
+        (model, pathlist) = selection.get_selected_rows()
+        for path in pathlist :
+            tree_iter = model.get_iter(path)
+            value = model.get_value(tree_iter,3)
+            self.ivylink.add_mission_command_dict(5 , 0, model.get_value(tree_iter,0), eval(value))
+        print("sent message")
         return 1
 
     def prepend_from_staging( self, button, selection ):
         select = self.stagingarea.get_selection()
         model, iter = select.get_selected()
-        self.ivylink.add_mission_command(msg)
+        self.ivylink.add_mission_command_dict(msg)
         return 1
 
     def make_ident_from_staging( self, button ):
@@ -67,14 +71,15 @@ class MissionGUI:
         self.stagingarea1.set_model(model=self.uavQueue) 
         self.stagingarea1.thaw_child_notify()
 
-    def update_archive(self, command_list)
+    def update_archive(self, command_list):
         for i in command_list:
-            self.archivestore.append(i.get('name') ,i.get('id'),i.get('msg'))
+            self.archivestore.append([i.get('name') ,i.get('id'),i.get('msg'), str(i)])
         return 1
 
 
     def import_from_file( self, button ):
-        xmlreader.openfile("sample.xml", update_archive)
+        x = xmlparser.xmlreader()
+        x.openfile("sample.xml", self.update_archive)
         
 
     def export_to_file( self, button ):

@@ -16,15 +16,17 @@ class xmlreader:
         i = 0
         for command in root.iter('command'):
             self.commandmsg = ""
-            for element in command:
-                if element == "id":
-                    print("do Nothing")
-                elif element == "name":
-                    print("do Nothing")
-                else:
-                    self.commandmsg = self.commandmsg + element + ":" + command.get(element)
+            self.element =""
+            self.command =""
+            for element in command.keys():
+                if (element != "id" and element != "name"):
+                    self.commandmsg = self.commandmsg + element + "=" + command.get(element) + " "
+                    self.element = element
+            self.command=command
+            
             self.commands.append(command.attrib)
-            self.commands[i]['msg'] = self.commandmsg                   
+            self.commands[i]['msg'] = self.commandmsg
+            i = i+1
             
         
         if callback != None :

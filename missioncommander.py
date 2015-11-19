@@ -32,6 +32,7 @@ def shutdown():
 if __name__ == "__main__":
     UI = GUIbinder(shutdown)
     ivy = ivyInit(UI)
+    UI.ivyGUI(ivy)
     Gtk.main()
 
 
