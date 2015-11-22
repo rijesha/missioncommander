@@ -15,10 +15,9 @@ class Connection():
 
     def getobstacleinfo(self):
         ob = self.s.get(baseurl+"/api/obstacles")
-        obdict = ast.literal_eval(ob.text)
-        stationary = obdict.get("stationary_obstacles")
-        moving = obdict.get("moving_obstacles")h 
-        
+        objects = ast.literal_eval(ob.text)
+        return objects
+
 
         
         

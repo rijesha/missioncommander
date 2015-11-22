@@ -30,54 +30,6 @@ class CommandSender(object):
     def __del__(self):
         self.shutdown()
 
-    def add_mission_command(self, msg_id = "", ac_id = 5 , insert = "APPEND" , wp_lat = "", wp_lon = "", wp_alt = "", duration = "60", center_lat = "", center_lon = "", center_alt = "", radius = "60",segment_lat_1 = "", segment_lat_2 = "", segment_lon_1 = "", segment_lon_2 = "", segment_alt = "", point_lat_1 = "", point_lon_1 = "", point_lat_2 = "", point_lon_2 = "", point_lat_3 = "", point_lon_3 = "", point_lat_4 = "", point_lon_4 = "", point_lat_5 = "", point_lon_5 = "", path_alt = "", nb = "", survey_lat_1 = "", survey_lon_1 = "", survey_lat_2 = "", survey_lon_2 = "", survey_alt = ""):
-        msg = PprzMessage("datalink", msg_id)
-        msg['ac_id'] = ac_id
-        msg['insert'] = insert
-        msg['duration'] = duration
-	
-        if msg_id == MISSION_GOTO_WP_LLA:
-            msg['wp_lat'] = wp_lat	
-            msg['wp_lon'] = wp_lon
-            msg['wp_alt'] = wp_alt
-
-        elif msg_id == MISSION_CIRCLE_LLA:
-            msg['center_lat'] = center_lat
-            msg['center_lon'] = center_lon
-            msg['center_alt'] = center_alt
-            msg['radius'] = radius
-
-        elif msg_id == MISSION_SEGMENT_LLA:
-            msg['segment_lat_1'] = segment_lat_1
-            msg['segment_lon_1'] = segment_lon_1
-            msg['segment_lat_2'] = segment_lat_2
-            msg['segment_lon_2'] = segment_lon_2
-
-        elif msg_id == MISSION_PATH_LLA:
-            msg['point_lat_1'] = point_lat_1
-            msg['point_lon_1'] = point_lon_1
-            msg['point_lat_2'] = point_lat_2
-            msg['point_lon_2'] = point_lon_2
-            msg['point_lat_3'] = point_lat_3
-            msg['point_lon_3'] = point_lon_3
-            msg['point_lat_4'] = point_lat_4
-            msg['point_lon_4'] = point_lon_4
-            msg['point_lat_5'] = point_lat_5
-            msg['point_lon_5'] = point_lon_5
-            msg['path_alt'] = path_alt
-            msg['nb'] = nb
-
-        elif msg_id == MISSION_SURVEY_LLA:
-            msg['survey_lat_1'] = survey_lat_1
-            msg['survey_lon_1'] = survey_lon_1
-            msg['survey_lat_2'] = survey_lat_2
-            msg['survey_lon_2'] = survey_lon_2
-            msg['survey_alt'] = survey_alt
-
-
-        print("Sending message: %s" % msg)
-        self._interface.send(msg)
-
     def add_mission_command_dict(self, ac_id, insert, msg_id, msgs):
         print('hello')
         msg = PprzMessage("datalink", msg_id)
@@ -131,15 +83,16 @@ class CommandSender(object):
         print("Sending message: %s" % msg)
         self._interface.send(msg)
 
-    def add_obstacle(self, obstacle_id, color, status, lat, lon, radius, alt):
+
+    def add_obstacle_dict(self, status, obstacle_id, obmsg):
         msg = PprzMessage("ground", "OBSTACLE")
         msg['id'] = obstacle_id
-        msg['color'] = color
-        msg['status'] = status
-        msg['lat'] = lat
-        msg['lon'] = lon
-        msg['radius'] = radius
-        msg['alt'] = alt
+        msg['color'] = "red"
+        msg['status'] = 0 if status=="create" else 1
+        msg['lat'] = int(obmsg.get("latitude") * 10000000.)
+        msg['lon'] = int(obmsg.get("longitude") * 10000000.)
+        msg['radius'] = int(obmsg.get("sphere_radius") if "sphere_radius" in obmsg else obmsg.get("cylinder_radius"))
+        msg['alt'] = int(obmsg.get("altitude_msl")*1000 if "altitude_msl" in obmsg else obmsg.get("cylinder_height") *1000)
         print("Sending message: %s" % msg)
         self._interface.send(msg)
 
