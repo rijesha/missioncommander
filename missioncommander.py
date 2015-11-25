@@ -6,34 +6,43 @@ import ivylinker
 import test
 from time import clock
 
-class ivyInit:
-    def __init__( self, UI ):
-        self.UI = UI
+
+class main:
+    def __init__( self ):
+        self.newmissionstatus = False
+        self.lastmissionmsg = None
+        self.shutdowngui = False
+        self.ivy = ivyhandler(parent = self)
+        self.UIthread = guihandler(parent = self)
+
+    def shutdown(self):
+        self.ivy.link.shutdown()
+        self.shutdowngui = True
+
+class ivyhandler:
+    def __init__( self, parent=None ):
+        self.parent = parent
         self.link = ivylinker.CommandSender(verbose=True, callback = self.msg_handler)
         self.lastmissionmessagetime = clock()
 
     def msg_handler(self, acid, msg):
-        if (msg.name == "MISSION_STATUS" and (self.lastmissionmessagetime + .02) < (clock())):           
-            self.UI.win.update_uav_queue(msg)
+        if (msg.name == "MISSION_STATUS" and (self.lastmissionmessagetime + .02) < (clock())):
+            self.parent.lastmissionmsg = msg
+            self.parent.newmissionstatus = True
             self.lastmissionmessagetime = clock()
 
-class GUIbinder:
-    def __init__( self, shutdown):
-        self.win = gui.MissionGUI(shutdowncb = shutdown)
+class guihandler:
+    def __init__( self, parent=None):
+        self.win = gui.MissionGUI(shutdowncb = parent.shutdown)
         self.win.window.show_all()
-
-    def ivyGUI(self, ivy):
-        self.win.ivybind(ivy.link)
-        
-
-def shutdown():
-    ivy.link.shutdown()
+        self.win.ivybind(parent.ivy.link)
+        self.i =1
+        while parent.shutdowngui==False:
+            if parent.newmissionstatus == True:
+                self.win.update_uav_queue(parent.lastmissionmsg)
+                parent.newmissionstatus = False
+            elif Gtk.events_pending():
+                Gtk.main_iteration()
 
 if __name__ == "__main__":
-    UI = GUIbinder(shutdown)
-    ivy = ivyInit(UI)
-    UI.ivyGUI(ivy)
-    Gtk.main()
-
-
-
+    main()

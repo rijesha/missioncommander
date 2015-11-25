@@ -9,7 +9,6 @@ class DialogExample(Gtk.Dialog):
 
 class MissionGUI:
     def gtk_main_quit( self, window ):
-        Gtk.main_quit()
         self.shutdowncb()
 
     def ivybind(self, ivylink):
@@ -73,7 +72,7 @@ class MissionGUI:
         for i in msg.fieldvalues[1]:
             if i != ",":
                 self.uavQueue.append(list(i) + list((msg.fieldvalues[0], "")))
-        self.stagingarea1.set_model(model=self.uavQueue) 
+        self.stagingarea1.set_model(model=self.uavQueue)
         self.stagingarea1.thaw_child_notify()
 
     def update_archive(self, command_list):
@@ -85,7 +84,7 @@ class MissionGUI:
     def import_from_file( self, button ):
         x = xmlparser.xmlreader()
         x.openfile("sample.xml", self.update_archive)
-        
+
 
     def export_to_file( self, button ):
         return 1
@@ -115,5 +114,3 @@ class MissionGUI:
         self.stagingarea1 = builder.get_object("stagingarea1")
 
         builder.connect_signals( self )
-
-
