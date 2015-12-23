@@ -31,16 +31,13 @@ class CommandSender(object):
         self.shutdown()
 
     def add_mission_command_dict(self, ac_id, insert, msg_id, msgs):
-        print('hello')
+
         msg = PprzMessage("datalink", msg_id)
-	
-        print(msgs)
-        print(msgs.keys)
-        print(msgs.get('duration'))
+
         msg['ac_id'] = ac_id
         msg['insert'] = insert
         msg['duration'] = msgs.get('duration')
-	
+
         if msg_id == 'MISSION_GOTO_WP_LLA':
             msg['wp_lat'] = msgs.get('wp_lat')
             msg['wp_lon'] = msgs.get('wp_lon')
@@ -80,23 +77,20 @@ class CommandSender(object):
             msg['survey_alt'] = msgs.get('survey_alt')
 
 
-        print("Sending message: %s" % msg)
+#        print("Sending message: %s" % msg)
         self._interface.send(msg)
 
 
     def add_obstacle_dict(self, status, obstacle_id, obmsg):
         msg = PprzMessage("ground", "OBSTACLE")
         msg['id'] = obstacle_id
-        msg['color'] = "red"
-        msg['status'] = 0 if status=="create" else 1
+        msg['color'] = "red" if obstacle_id > 19 else "orange"
+        msg['status'] = 0 if status=="create" else (1 if status=="update" else 2)
         msg['lat'] = int(obmsg.get("latitude") * 10000000.)
         msg['lon'] = int(obmsg.get("longitude") * 10000000.)
         msg['radius'] = int(obmsg.get("sphere_radius") if "sphere_radius" in obmsg else obmsg.get("cylinder_radius"))
         msg['alt'] = int(obmsg.get("altitude_msl")*1000 if "altitude_msl" in obmsg else obmsg.get("cylinder_height") *1000)
-        print("Sending message: %s" % msg)
+#        print("Sending message: %s" % msg)
         self._interface.send(msg)
 
 # add_mission_command(msg_id = "MISSION_GOTO_WP_LLA", ac_id=5, insert = "0", wp_lat=434624607, wp_lon=12723454, wp_alt=700, duration =60)
-
-
-
