@@ -23,3 +23,7 @@ class Connection():
         ob = self.s.get(baseurl+"/api/obstacles")
         objects = ast.literal_eval(ob.text)
         return objects
+
+    def updatetelemetry(self, tele):
+        tl = self.s.post(baseurl+"/api/telemetry", tele )
+        print(tl.reason)

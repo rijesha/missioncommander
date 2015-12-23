@@ -7,12 +7,17 @@ import test
 import interopclient
 import time
 from time import clock
+import pyproj
 
 
 class main:
     def __init__( self ):
         self.newmissionstatus = False
         self.lastmissionmsg = None
+        self.lastgps = None
+        self.lastattitude = None
+        self.lastestimator = None
+        self.telinfoavailable = False
         self.shutdowngui = False
         self.initIVY()
         self.initGUI()
@@ -38,6 +43,21 @@ class main:
             self.newmissionstatus = True
             self.lastmissionmessagetime = clock()
 
+        if (msg.name == "GPS"):
+            self.lastgps = msg
+
+        if (msg.name == "ATTITUDE"):
+            self.lastattitude = msg
+
+        if (msg.name == "ESTIMATOR"):
+            self.lastestimator = msg
+
+        if (self.lastgps != None) and (self.lastattitude != None) and (self.lastestimator != None):
+            self.telinfoavailable = True
+
+
+
+
     def initGUI( self):
         print("initiiaaaliesdfsdaiiiiiiiiiiiiiiiiiiiiiiiiiiiii")
         self.win = gui.MissionGUI(shutdowncb = self.shutdown)
@@ -48,7 +68,6 @@ class main:
     def guihandler(self):
         print("runnnnnnnnnnnnnnnnnnnning")
         i=1
-        #Gtk.main()
         while self.shutdowngui==False:
             if self.newmissionstatus == True:
                 self.win.update_uav_queue(self.lastmissionmsg)
@@ -57,29 +76,32 @@ class main:
                 i=i+1
                 print(i)
                 Gtk.main_iteration()
-
-            time.sleep(0.01)
+            time.sleep(0.02)
 
     def initINTEROP(self):
         self.interoplink = interopclient.Connection()
-        self.lastmoveobjecttime = clock()-.01
-        self.laststationojecttime = clock()-.1
+        self.lastmoveobjecttime = clock()-10
+        self.laststationojecttime = clock()-10
         self.bypassinghashtable = 0
         self.bypassinghashtable1 = 0
+        self.lastupdatetelemetry = clock()-10
 
     def interophandler(self):
         while True:
             if self.lastmoveobjecttime + .01 < clock():
-                print("hey move")
                 self.movinghandler()
                 self.lastmoveobjecttime = clock()
 
             if self.laststationojecttime + .1 < clock():
-                print("hey 1")
                 self.stationaryhandler()
                 self.laststationojecttime = clock()
 
-            time.sleep(0.01)
+            if self.lastupdatetelemetry + .01 <clock() and self.telinfoavailable :
+                print("updating telemetr")
+                self.telemetryhandler()
+                self.lastupdatetelemetry = clock()
+
+            time.sleep(0.02)
 
     def stationaryhandler(self):
         objects = self.interoplink.getobstacleinfo()
@@ -106,6 +128,47 @@ class main:
                 print(ob.get("longitude"))
                 self.ivylink.add_obstacle_dict("create",1, ob)
 
+    def telemetryhandler(self):
+        lat, lon = self.utm_to_DD((self.lastgps.fieldvalues[1]), ( self.lastgps.fieldvalues[2] ), self.lastgps.fieldvalues[9])
+        alt = self.lastestimator.fieldvalues[0]
+        course = float(self.lastattitude.fieldvalues[1]) * 180 / 3.14
+        tele = {'latitude':float(lat), 'longitude':float(lon), 'altitude_msl':float(alt), 'uas_heading':course}
+        self.interoplink.updatetelemetry(tele)
+
+
+    def utm_to_DD(self, easting, northing, zone, hemisphere="northern"):
+        """
+        Converts a set of UTM GPS coordinates to WGS84 Decimal Degree GPS coordinates.
+        Returns (latitude, longitude) as a tuple.
+        easting - UTM easting in metres
+        northing - UTM northing in metres
+        zone - current UTM zone
+
+        Note that no hemisphere is specified; in the southern hemisphere, this function expects the false northing (10 000 000m) to be subtracted.
+
+        An exception will be raised if the conversion involves invalid values.
+        """
+
+        easting = float(easting) / 100
+        northing =  float(northing) / 100
+        zone = int(zone)
+        # Easting and Northing ranges from https://www.e-education.psu.edu/natureofgeoinfo/c2_p23.html
+        min_easting, max_easting = 167000, 833000
+        if not (min_easting < easting < max_easting):
+            print("prinsgfjadslkfjsfdsprint")
+            print(easting)
+            raise(ValueError("Easting value of %s is out of bounds (%s to %s)." % (easting, min_easting, max_easting)))
+        min_northing, max_northing = -9900000, 9400000
+        if not (min_northing < northing < max_northing):
+            raise(ValueError("Northing value of %s is out of bounds (%s to %s)." % (northing, min_northing, max_northing)))
+
+        if not (1 <= zone <= 60):
+            raise(ValueError("Zone value of %s is out of bounds" % zone))
+
+        pr = pyproj.Proj(proj='utm', zone=zone, ellps='WGS84', errcheck=True)
+
+        lon, lat = pr(easting, northing, inverse=True)
+        return repr(lat), repr(lon)
 
 if __name__ == "__main__":
     main()
