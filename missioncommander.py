@@ -1,60 +1,88 @@
-#!/usr/local/bin/python
-
 from gi.repository import Gtk
-from time import clock
-import threading
 
-import interopclient
+import threading
 import gui
 import ivylinker
+import test
+import interopclient
+import time
+from time import clock
 
 
+class main:
+    def __init__( self ):
+        self.newmissionstatus = False
+        self.lastmissionmsg = None
+        self.shutdowngui = False
+        self.initIVY()
+        self.initGUI()
+        self.initINTEROP()
+        self.interopTH = threading.Thread(target = self.interophandler)
+        self.interopTH.start()
+        self.guihandler()
+#        self.guiTH = threading.Thread(target = self.guihandler)
+#        self.guiTH.start()
+        print("SDFDSKFJDSLJFLKDSFKLDSFKJLSDJKLFJKDSFKLDSJKFJDSKL")
 
-class ivyInit:
-    def __init__( self, UI ):
-        self.UI = UI
-        self.link = ivylinker.CommandSender(verbose=True, callback = self.msg_handler)
+    def shutdown(self):
+        self.ivylink.shutdown()
+        self.shutdowngui = True
+
+    def initIVY( self):
+        self.ivylink = ivylinker.CommandSender(verbose=True, callback = self.msg_handler)
         self.lastmissionmessagetime = clock()
 
     def msg_handler(self, acid, msg):
-        if (msg.name == "MISSION_STATUS" and (self.lastmissionmessagetime + .02) < (clock())):           
-            self.UI.win.update_uav_queue(msg)
+        if (msg.name == "MISSION_STATUS" and (self.lastmissionmessagetime + .02) < (clock())):
+            self.lastmissionmsg = msg
+            self.newmissionstatus = True
             self.lastmissionmessagetime = clock()
 
-class GUIbinder:
-    def __init__( self, shutdown):
-        self.win = gui.MissionGUI(shutdowncb = shutdown)
+    def initGUI( self):
+        print("initiiaaaliesdfsdaiiiiiiiiiiiiiiiiiiiiiiiiiiiii")
+        self.win = gui.MissionGUI(shutdowncb = self.shutdown)
         self.win.window.show_all()
+        self.win.ivybind(self.ivylink)
+        self.i =1
 
-    def passivyintoGUI(self, ivy):
-        self.win.ivybind(ivy)
-        
+    def guihandler(self):
+        print("runnnnnnnnnnnnnnnnnnnning")
+        i=1
+        #Gtk.main()
+        while self.shutdowngui==False:
+            if self.newmissionstatus == True:
+                self.win.update_uav_queue(self.lastmissionmsg)
+                self.newmissionstatus = False
+            elif Gtk.events_pending():
+                i=i+1
+                print(i)
+                Gtk.main_iteration()
 
-class interophandler(threading.Thread):
-    def __init__(self, ivylink):
-        super(interophandler, self).__init__()
-        self.ivylink = ivylink
-        self.con = interopclient.Connection()
-        self.lastmoveobjecttime = clock()-.7
-        self.laststationojecttime = clock()-10
-        print("hellsdfO")
+            time.sleep(0.01)
+
+    def initINTEROP(self):
+        self.interoplink = interopclient.Connection()
+        self.lastmoveobjecttime = clock()-.01
+        self.laststationojecttime = clock()-.1
         self.bypassinghashtable = 0
         self.bypassinghashtable1 = 0
 
-    
-    def run(self):
+    def interophandler(self):
         while True:
-            if self.lastmoveobjecttime + .7 < clock():
+            if self.lastmoveobjecttime + .01 < clock():
+                print("hey move")
                 self.movinghandler()
-                self.lastmoveobjecttime = clock()  
- 
-            if self.laststationojecttime + 10 < clock():
+                self.lastmoveobjecttime = clock()
+
+            if self.laststationojecttime + .1 < clock():
+                print("hey 1")
                 self.stationaryhandler()
-                self.laststationojecttime = clock()              
-            
+                self.laststationojecttime = clock()
+
+            time.sleep(0.01)
 
     def stationaryhandler(self):
-        objects = self.con.getobstacleinfo()
+        objects = self.interoplink.getobstacleinfo()
         station = objects.get("stationary_obstacles")
         #need to generate some sort of hash table to index moving objects
         i =2
@@ -65,7 +93,7 @@ class interophandler(threading.Thread):
         self.bypassinghashtable1 = 1
 
     def movinghandler(self):
-        objects = self.con.getobstacleinfo()
+        objects = self.interoplink.getobstacleinfo()
         moving = objects.get("moving_obstacles")
         #need to generate some sort of hash table to index moving objects
         #if object already exits in hashtable then update else creat, add to hastable then update
@@ -76,23 +104,8 @@ class interophandler(threading.Thread):
             else:
                 self.bypassinghashtable = 1
                 print(ob.get("longitude"))
-                self.ivylink.add_obstacle_dict("create",1, ob)        
+                self.ivylink.add_obstacle_dict("create",1, ob)
 
-
-def shutdown():
-    ivy.link.shutdown()
 
 if __name__ == "__main__":
-    UI = GUIbinder(shutdown)
-    ivy = ivyInit(UI)
-    UI.passivyintoGUI(ivy.link)
-
-    #interopTH = threading.Thread(target = interophandler, args = ivy)
-    interopTH = interophandler(ivy.link)
-    interopTH.daemon = True
-    print("hellO")
-    interopTH.start()
-    Gtk.main()
-
-
-
+    main()

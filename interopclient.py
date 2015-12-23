@@ -11,16 +11,15 @@ class Connection():
         self.s = requests.Session()
         data = {"username":username, "password":password}
         loginurl = "/api/login"
-        login = self.s.post(baseurl+loginurl, data=data)
+        try:
+            login = self.s.post(baseurl+loginurl, data=data)
+            pass
+        except Exception as e:
+            print("failed to login")
+            raise
+
 
     def getobstacleinfo(self):
         ob = self.s.get(baseurl+"/api/obstacles")
         objects = ast.literal_eval(ob.text)
         return objects
-
-
-        
-        
-        
-
-
