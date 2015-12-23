@@ -18,7 +18,7 @@ class main:
         self.lastattitude = None
         self.lastestimator = None
         self.telinfoavailable = False
-        self.shutdowngui = False
+        self.shutdown = False
         self.initIVY()
         self.initGUI()
         self.initINTEROP()
@@ -29,9 +29,9 @@ class main:
 #        self.guiTH.start()
         print("SDFDSKFJDSLJFLKDSFKLDSFKJLSDJKLFJKDSFKLDSJKFJDSKL")
 
-    def shutdown(self):
+    def shutdownprog(self):
         self.ivylink.shutdown()
-        self.shutdowngui = True
+        self.shutdown = True
 
     def initIVY( self):
         self.ivylink = ivylinker.CommandSender(verbose=True, callback = self.msg_handler)
@@ -60,7 +60,7 @@ class main:
 
     def initGUI( self):
         print("initiiaaaliesdfsdaiiiiiiiiiiiiiiiiiiiiiiiiiiiii")
-        self.win = gui.MissionGUI(shutdowncb = self.shutdown)
+        self.win = gui.MissionGUI(shutdowncb = self.shutdownprog)
         self.win.window.show_all()
         self.win.ivybind(self.ivylink)
         self.i =1
@@ -68,7 +68,7 @@ class main:
     def guihandler(self):
         print("runnnnnnnnnnnnnnnnnnnning")
         i=1
-        while self.shutdowngui==False:
+        while self.shutdown==False:
             if self.newmissionstatus == True:
                 self.win.update_uav_queue(self.lastmissionmsg)
                 self.newmissionstatus = False
@@ -101,7 +101,10 @@ class main:
                 self.telemetryhandler()
                 self.lastupdatetelemetry = clock()
 
+            if self.shutdown == True:
+                return 0
             time.sleep(0.02)
+
 
     def stationaryhandler(self):
         objects = self.interoplink.getobstacleinfo()
