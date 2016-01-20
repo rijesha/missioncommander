@@ -83,7 +83,7 @@ class MissionGUI:
 
     def import_from_file( self, button ):
         x = xmlparser.xmlreader()
-        x.openfile("sample.xml", self.update_archive)
+        x.openfile(self.open_xml_selector(), self.update_archive)
 
 
     def export_to_file( self, button ):
@@ -98,13 +98,22 @@ class MissionGUI:
         row_number = index[0]
         return 1
 
+    def open_xml_selector(self):
+        self.xmlloadselector.show_all()
+        result = self.xmlloadselector.run()
+        filename = self.xmlloadselector.get_filename()
+        self.xmlloadselector.hide()
+        if result == 1:
+            return filename
+        else:
+            return 0
 
     def __init__( self, shutdowncb = None):
         builder = Gtk.Builder()
         builder.add_from_file( "gui.glade" )
         self.shutdowncb = shutdowncb
         self.window = builder.get_object( "window1" )
-        self.newcommand = builder.get_object( "dialog1" )
+        self.dia = builder.get_object( "dialog1" )
         self.stagingarea = builder.get_object( "stagingarea" )
         self.stagingstore = builder.get_object( "stagingstore" )
         self.archivearea = builder.get_object( "archivearea" )
@@ -112,5 +121,5 @@ class MissionGUI:
         self.uavQueue = builder.get_object( "uavQueue" )
         self.uavQueuestaging = builder.get_object( "uavQueuestaging" )
         self.stagingarea1 = builder.get_object("stagingarea1")
-
+        self.xmlloadselector = builder.get_object("xmlloadselector")
         builder.connect_signals( self )
