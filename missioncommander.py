@@ -1,9 +1,6 @@
-from gi.repository import Gtk
+#from gi.repository import Gtk
 from time import clock, sleep
 
-
-import threading
-import gui
 import ivylinker
 import interopclient
 import maths
@@ -13,12 +10,10 @@ class main:
     def __init__( self ):
         self.shutdown = False
         self.initIVY()
-        self.initGUI()
         self.initINTEROP()
         if self.interoplink.loginsucess == True:
-            self.interopTH = threading.Thread(target = self.interophandler)
-            self.interopTH.start()
-        self.guihandler()
+            self.interophandler()
+ 
 
     def initIVY( self):
         print("Initializing ivylink")
@@ -40,22 +35,6 @@ class main:
         self.bypassinghashtable1 = 0
         self.lastupdatetelemetry = clock()-10
         self.objecttable = {}
-
-    def initGUI( self):
-        print("Initializing GUI")
-        self.win = gui.MissionGUI(shutdowncb = self.shutdownprog)
-        self.win.window.show_all()
-        self.win.ivybind(self.ivylink)
-
-    def guihandler(self):
-        print("Opening GUI")
-        while self.shutdown==False:
-            if self.newmissionstatus == True:
-                self.win.update_uav_queue(self.lastmissionmsg)
-                self.newmissionstatus = False
-            elif Gtk.events_pending():
-                Gtk.main_iteration()
-            sleep(0.01)
 
     def interophandler(self):
         print("Communicating with Interop Server")
@@ -136,11 +115,4 @@ class main:
 
 if __name__ == "__main__":
     main()
-#    try:
-#        p = main#
-#        p.start()#
-#    except KeyboardInterrupt:
-#        print 'Interrupted'
-#        p.shutdownprog()
-#        print("SDFKJSDLFKJSDLKFJ")
-#        sys.exit(0)
+

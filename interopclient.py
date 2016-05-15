@@ -27,4 +27,8 @@ class Connection():
         return objects
 
     def updatetelemetry(self, tele):
+	print("Updating telemetry")
+	print(tele)
         tl = self.s.post(baseurl+"/api/telemetry", tele )
+	print(dir(tl))
+	print(tl.status_code)
