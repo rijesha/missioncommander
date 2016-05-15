@@ -1,6 +1,6 @@
 #from gi.repository import Gtk
-from time import clock, sleep
-
+from time import clock, sleep, time
+import signal
 import ivylinker
 import interopclient
 import maths
@@ -11,9 +11,13 @@ class main:
         self.shutdown = False
         self.initIVY()
         self.initINTEROP()
+        signal.signal(signal.SIGINT, self.ctrlcshutdown)
         if self.interoplink.loginsucess == True:
             self.interophandler()
  
+    def ctrlcshutdown(self, signum, fram):
+        self.shutdown = True
+        
 
     def initIVY( self):
         print("Initializing ivylink")
@@ -29,33 +33,38 @@ class main:
     def initINTEROP(self):
         print("Initializing interop")
         self.interoplink = interopclient.Connection()
-        self.lastmoveobjecttime = clock()-10
-        self.laststationojecttime = clock()-10
+        self.lastmoveobjecttime = time()-10
+        self.laststationojecttime = time()-10
         self.bypassinghashtable = 0
         self.bypassinghashtable1 = 0
-        self.lastupdatetelemetry = clock()-10
+        self.lastupdatetelemetry = time()-10
         self.objecttable = {}
 
     def interophandler(self):
+        print("waiting for full telemetry message")
+        while self.telinfoavailable==False:
+            sleep(.02)
         print("Communicating with Interop Server")
         while True:
-            if self.lastmoveobjecttime + .01 < clock():
+            if self.lastmoveobjecttime + .1 < time():
                 self.movinghandler()
-                self.lastmoveobjecttime = clock()
+                self.lastmoveobjecttime = time()
 
-            if self.laststationojecttime + .1 < clock():
+            if self.laststationojecttime + .1 < time():
                 self.stationaryhandler()
-                self.laststationojecttime = clock()
+                self.laststationojecttime = time()
 
-            if self.lastupdatetelemetry + .01 <clock() and self.telinfoavailable :
+            if ((self.lastupdatetelemetry + .05) < time()):
                 self.telemetryhandler()
-                self.lastupdatetelemetry = clock()
+                tmp = time()
+                print(1/(tmp - self.lastupdatetelemetry))
+                self.lastupdatetelemetry = tmp
 
             if self.shutdown == True:
                 print("shutting down interoperability")
                 self.objectdeletion()
                 return 0
-            sleep(0.02)
+            sleep(0.002)
 
     def msg_handler(self, acid, msg):
         if (msg.name == "MISSION_STATUS" and (self.lastmissionmessagetime + .1) < (clock())):
@@ -105,12 +114,9 @@ class main:
     def telemetryhandler(self):
         lat, lon = maths.utm_to_DD((self.lastgps.fieldvalues[1]), ( self.lastgps.fieldvalues[2] ), self.lastgps.fieldvalues[9])
         alt = self.lastestimator.fieldvalues[0]
-        course = float(self.lastattitude.fieldvalues[1]) * 180 / 3.14
+        course = float(self.lastattitude.fieldvalues[1]) * 180 / 3.14 + 90
         tele = {'latitude':float(lat), 'longitude':float(lon), 'altitude_msl':float(alt), 'uas_heading':course}
         self.interoplink.updatetelemetry(tele)
-
-    def shutdownprog(self):
-        self.shutdown = True
 
 
 if __name__ == "__main__":
