@@ -1,0 +1,14 @@
+import ivylinker
+
+ivylink = ivylinker.CommandSender(verbose=True)
+
+
+ob = {'latitude': 43.4624607, 'longitude': 1.2723454, 'sphere_radius': 413, 'altitude_msl': 139}
+
+ivylink.add_obstacle_dict("update",1, ob)
+
+
+
+add_mission_command(msg_id = "MISSION_GOTO_WP_LLA", ac_id=5, insert = "0", wp_lat=434624607, wp_lon=12723454, wp_alt=700, duration =60)
+
+

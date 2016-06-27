@@ -7,17 +7,21 @@ from os import path, getenv
 
 # if PAPARAZZI_SRC not set, then assume the tree containing this
 # file is a reasonable substitute
-PPRZ_SRC = getenv("PAPARAZZI_SRC", path.normpath(path.join(path.dirname(path.abspath(__file__)), '../../../../')))
-sys.path.append(PPRZ_SRC + "/sw/lib/python")
+# if PAPARAZZI_SRC not set, then assume the tree containing this file is a reasonable substitute
+PPRZ_SRC = getenv("PAPARAZZI_SRC", path.normpath(path.join(path.dirname(path.abspath(__file__)), '~/paparazzi/')))
 
-from ivy_msg_interface import IvyMessagesInterface
-from pprz_msg.message import PprzMessage
+sys.path.append(PPRZ_SRC + "/sw/ext/pprzlink/lib/v1.0/python")
+
+from pprzlink.ivy  import IvyMessagesInterface
+from pprzlink.message   import PprzMessage
 
 class CommandSender(object):
     def __init__(self, verbose=False, callback = None):
         self.verbose = verbose
         self.callback = callback
-        self._interface = IvyMessagesInterface(self.message_recv)
+        self._interface = IvyMessagesInterface("SuasInterop", start_ivy=False)
+	self._interface.subscribe(self.message_recv)
+	self._interface.start()
 
     def message_recv(self, ac_id, msg):
         if (self.verbose and self.callback != None):
@@ -90,7 +94,7 @@ class CommandSender(object):
         msg['lon'] = int(obmsg.get("longitude") * 10000000.)
         msg['radius'] = int(obmsg.get("sphere_radius") if "sphere_radius" in obmsg else obmsg.get("cylinder_radius"))
         msg['alt'] = int(obmsg.get("altitude_msl")*1000 if "altitude_msl" in obmsg else obmsg.get("cylinder_height") *1000)
-#        print("Sending message: %s" % msg)
+        print("Sending message: %s" % msg)
         self._interface.send(msg)
 
 # add_mission_command(msg_id = "MISSION_GOTO_WP_LLA", ac_id=5, insert = "0", wp_lat=434624607, wp_lon=12723454, wp_alt=700, duration =60)
